@@ -1,0 +1,6 @@
+[tools]
+jactionlint = "2.2.0"
+
+[tasks."actions:lint"]
+description = "Lint GitHub Actions workflows"
+run = "jactionlint .github/workflows/*.yml"
