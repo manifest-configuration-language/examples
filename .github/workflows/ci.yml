@@ -45,10 +45,5 @@ jobs:
           mv "$install_dir/mcl-linux-amd64" "$install_dir/mcl"
           echo "$install_dir" >> "$GITHUB_PATH"
 
-      - name: Check all examples
-        run: |
-          set -euo pipefail
-          while IFS= read -r -d '' sample; do
-            echo "Checking $sample"
-            mcl check "$sample"
-          done < <(find . -name main.mcl -print0 | sort -z)
+      - name: Verify examples and rendered outputs
+        run: scripts/verify-examples.sh

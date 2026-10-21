@@ -50,3 +50,7 @@
 | [adapters/kustomize](adapters/kustomize/) | ローカルKustomize overlayのビルド | `mcl check adapters/kustomize/main.mcl` |
 | [adapters/helm](adapters/helm/) | Chartの値を指定したHelmレンダリング | `mcl check adapters/helm/main.mcl` |
 | [adapters/lifecycle](adapters/lifecycle/) | ResourceへのLifecycle eventとcleanupの設定 | `mcl check adapters/lifecycle/main.mcl` |
+
+## 検証
+
+`scripts/verify-examples.sh`は全サンプルを`mcl check`で検証し、Manifest、Kustomize、Helm Adapterの`mcl render`結果を各ディレクトリの`expected.yaml`と比較します。CIとリリース前検証はこのスクリプトを実行します。Adapterの出力を意図的に変更した場合は、期待値を確認して更新してください。
