@@ -7,6 +7,10 @@ on:
         description: Release tag, for example v1.2.3. Empty selects the next patch version.
         required: false
         type: string
+      mcl_version:
+        description: Published MCL CLI version used to validate every example, for example v1.2.3.
+        required: false
+        type: string
   push:
     tags:
       - 'v*'
@@ -32,6 +36,39 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+
+      - name: Validate MCL release version
+        env:
+          MCL_VERSION: ${{ inputs.mcl_version || vars.MCL_VERSION }}
+        run: |
+          set -euo pipefail
+          if [ -z "$MCL_VERSION" ]; then
+            echo "Provide mcl_version or configure the MCL_VERSION repository variable." >&2
+            exit 1
+          fi
+          [[ "$MCL_VERSION" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          echo "version=${MCL_VERSION#v}" >> "$GITHUB_OUTPUT"
+        id: mcl
+
+      - name: Install Go
+        uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        with:
+          go-version: '1.27.3'
+          check-latest: false
+          cache: false
+
+      - name: Install released MCL CLI
+        env:
+          MCL_VERSION: ${{ steps.mcl.outputs.version }}
+        run: go install "github.com/manifest-configuration-language/mcl/cmd/mcl@v${MCL_VERSION}"
+
+      - name: Verify examples
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' sample; do
+            echo "Checking $sample"
+            mcl check "$sample"
+          done < <(find . -name main.mcl -print0 | sort -z)
 
       - name: Resolve release target
         id: target
