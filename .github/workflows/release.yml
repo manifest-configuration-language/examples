@@ -10,6 +10,7 @@ on:
       mcl_version:
         description: Published MCL CLI version used to validate every example, for example v1.2.3.
         required: false
+        default: v0.1.0
         type: string
   push:
     tags:
@@ -39,28 +40,32 @@ jobs:
 
       - name: Validate MCL release version
         env:
-          MCL_VERSION: ${{ inputs.mcl_version || vars.MCL_VERSION }}
+          MCL_VERSION: ${{ inputs.mcl_version || vars.MCL_VERSION || 'v0.1.0' }}
         run: |
           set -euo pipefail
-          if [ -z "$MCL_VERSION" ]; then
-            echo "Provide mcl_version or configure the MCL_VERSION repository variable." >&2
-            exit 1
-          fi
           [[ "$MCL_VERSION" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]]
-          echo "version=${MCL_VERSION#v}" >> "$GITHUB_OUTPUT"
+          version="${MCL_VERSION#v}"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
         id: mcl
 
-      - name: Install Go
-        uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
-        with:
-          go-version: '1.27.3'
-          check-latest: false
-          cache: false
-
-      - name: Install released MCL CLI
+      - name: Download and verify released MCL CLI
         env:
           MCL_VERSION: ${{ steps.mcl.outputs.version }}
-        run: go install "github.com/manifest-configuration-language/mcl/cmd/mcl@v${MCL_VERSION}"
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          archive="mcl_${MCL_VERSION}_linux_amd64.tar.gz"
+          install_dir="$RUNNER_TEMP/mcl-cli"
+          mkdir -p "$install_dir"
+          gh release download "v${MCL_VERSION}" \
+            --repo manifest-configuration-language/mcl \
+            --pattern "$archive" \
+            --pattern SHA256SUMS \
+            --dir "$install_dir"
+          (cd "$install_dir" && grep " $archive$" SHA256SUMS | sha256sum --check)
+          tar -xzf "$install_dir/$archive" -C "$install_dir"
+          mv "$install_dir/mcl-linux-amd64" "$install_dir/mcl"
+          echo "$install_dir" >> "$GITHUB_PATH"
 
       - name: Verify examples
         run: |

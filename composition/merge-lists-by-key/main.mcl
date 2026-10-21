@@ -25,4 +25,4 @@ let containers = mergeByKey(
   key = "name",
 )
 
-emit containers
+emit each containers
