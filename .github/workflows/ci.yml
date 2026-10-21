@@ -26,12 +26,17 @@ jobs:
 
       - name: Download and verify released MCL CLI
         env:
-          MCL_VERSION: ${{ vars.MCL_VERSION || 'v0.1.0' }}
+          MCL_VERSION: ${{ vars.MCL_VERSION }}
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          [[ "$MCL_VERSION" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]]
-          version="${MCL_VERSION#v}"
+          latest_version="$(gh release view --repo manifest-configuration-language/mcl --json tagName --jq .tagName)"
+          version="${latest_version#v}"
+          if [ -n "$MCL_VERSION" ] && [ "${MCL_VERSION#v}" != "$version" ]; then
+            printf 'MCL_VERSION %s differs from the latest MCL release %s\n' "$MCL_VERSION" "$latest_version" >&2
+            exit 1
+          fi
+          [[ "$latest_version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
           archive="mcl_${version}_linux_amd64.tar.gz"
           install_dir="$RUNNER_TEMP/mcl-cli"
           mkdir -p "$install_dir"

@@ -8,9 +8,8 @@ on:
         required: false
         type: string
       mcl_version:
-        description: Published MCL CLI version used to validate every example, for example v1.2.3.
+        description: Optional MCL CLI version. If set, it must be the latest stable release.
         required: false
-        default: v0.1.0
         type: string
   push:
     tags:
@@ -40,11 +39,17 @@ jobs:
 
       - name: Validate MCL release version
         env:
-          MCL_VERSION: ${{ inputs.mcl_version || vars.MCL_VERSION || 'v0.1.0' }}
+          MCL_VERSION: ${{ inputs.mcl_version }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          [[ "$MCL_VERSION" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]]
-          version="${MCL_VERSION#v}"
+          latest_version="$(gh release view --repo manifest-configuration-language/mcl --json tagName --jq .tagName)"
+          [[ "$latest_version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          version="${latest_version#v}"
+          if [ -n "$MCL_VERSION" ] && [ "${MCL_VERSION#v}" != "$version" ]; then
+            printf 'MCL_VERSION %s differs from the latest MCL release %s\n' "$MCL_VERSION" "$latest_version" >&2
+            exit 1
+          fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
         id: mcl
 
