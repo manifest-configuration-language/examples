@@ -76,6 +76,7 @@ jobs:
           git archive --format=tar.gz --prefix="mcl-examples-${RELEASE_VERSION}/" "$GITHUB_SHA" > "dist/mcl-examples-${RELEASE_VERSION}.tar.gz"
           (cd dist && shasum -a 256 "mcl-examples-${RELEASE_VERSION}.tar.gz" > SHA256SUMS)
 
+      # GitHub FreeではPrivateリポジトリのArtifact Attestationを利用できないため、公開時のみ生成します。
       - name: Attest archive
         if: github.repository_visibility == 'public'
         uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
