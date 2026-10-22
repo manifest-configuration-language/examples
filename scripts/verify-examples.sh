@@ -15,8 +15,30 @@ awk -F'[()]' '/^\| \[/ { print $2 }' README.md \
   | sort > "$tmp_dir/readme-example-directories.txt"
 awk -F'|' '
   /^\| \[/ {
-    if (NF != 5 || $3 !~ /[^[:space:]]/ || $4 !~ /`mcl (check|render) [^`]+`/) {
+    if (NF != 5 || $3 !~ /[^[:space:]]/) {
       printf "README.md example row %d must include a description and an executable MCL command.\n", NR > "/dev/stderr"
+      failed = 1
+      next
+    }
+    if (!match($2, /\]\([^)]*\)/)) {
+      printf "README.md example row %d must link to its sample directory.\n", NR > "/dev/stderr"
+      failed = 1
+      next
+    }
+    directory = substr($2, RSTART + 2, RLENGTH - 3)
+    sub(/\/$/, "", directory)
+    command = $4
+    sub(/^[[:space:]]+/, "", command)
+    sub(/[[:space:]]+$/, "", command)
+    if (command !~ /^`mcl (check|render) [^`]+`$/) {
+      printf "README.md example row %d must include a backticked MCL check or render command.\n", NR > "/dev/stderr"
+      failed = 1
+      next
+    }
+    sub(/^`mcl (check|render) /, "", command)
+    sub(/`$/, "", command)
+    if (command != directory "/main.mcl") {
+      printf "README.md example row %d must run %s/main.mcl.\n", NR, directory > "/dev/stderr"
       failed = 1
     }
   }
