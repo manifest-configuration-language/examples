@@ -26,5 +26,8 @@ jobs:
 
       - uses: jdx/mise-action@8418fedb1110381a0d3ba51a7a415d7c1b884550 # v5.2.2
 
+      - name: Lint GitHub Actions workflows
+        run: mise run actions:lint
+
       - name: Verify examples and rendered outputs
         run: scripts/verify-examples.sh
