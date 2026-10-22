@@ -7,6 +7,17 @@ cd "$root"
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
 
+find . -name main.mcl -print \
+  | sed -E 's#^\./##; s#/main\.mcl$##' \
+  | sort > "$tmp_dir/example-directories.txt"
+awk -F'[()]' '/^\| \[/ { print $2 }' README.md \
+  | sed 's#/$##' \
+  | sort > "$tmp_dir/readme-example-directories.txt"
+if ! diff -u "$tmp_dir/example-directories.txt" "$tmp_dir/readme-example-directories.txt"; then
+  echo "README.md must list each directory containing main.mcl exactly once." >&2
+  exit 1
+fi
+
 while IFS= read -r -d '' sample; do
   echo "Checking $sample"
   mcl check "$sample"
