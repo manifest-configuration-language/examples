@@ -53,4 +53,4 @@
 
 ## 検証
 
-`scripts/verify-examples.sh`は`main.mcl`を含む各ディレクトリを自動検出し、`mcl check`と`mcl render`で検証します。各ディレクトリの`expected.yaml`とrender結果を比較し、出力の変更を検出します。CIとリリース前検証はこのスクリプトを実行します。出力を意図的に変更した場合は、期待値を確認して更新してください。
+`scripts/verify-examples.sh`は`main.mcl`を含む各ディレクトリを自動検出し、`mcl check`と`mcl render`で検証します。各ディレクトリの`expected.yaml`とrender結果を比較し、出力の変更を検出します。CIとローカルの確認ではこのスクリプトを実行します。出力を意図的に変更した場合は、期待値を確認して更新してください。

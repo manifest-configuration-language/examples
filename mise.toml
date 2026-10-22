@@ -2,7 +2,7 @@
 jactionlint = "2.2.0"
 
 [tools."github:manifest-configuration-language/mcl"]
-version = "0.1.0"
+version = "0.1.1"
 rename_exe = "mcl"
 
 [tools."github:manifest-configuration-language/mcl".platforms]
