@@ -21,12 +21,16 @@ fi
 while IFS= read -r -d '' sample; do
   echo "Checking $sample"
   mcl check "$sample"
+  actual="$tmp_dir/${sample#./}"
+  actual="${actual%/main.mcl}.yaml"
+  mkdir -p "$(dirname "$actual")"
+  echo "Rendering $sample"
+  mcl render "$sample" > "$actual"
 done < <(find . -name main.mcl -print0 | sort -z)
 
 while IFS= read -r -d '' expected; do
   sample="${expected%/expected.yaml}/main.mcl"
-  actual="$tmp_dir/$(basename "$(dirname "$expected")").yaml"
-  echo "Rendering $sample"
-  mcl render "$sample" > "$actual"
+  actual="$tmp_dir/$sample"
+  actual="${actual%/main.mcl}.yaml"
   diff -u "$expected" "$actual"
 done < <(find adapters -name expected.yaml -print0 | sort -z)
