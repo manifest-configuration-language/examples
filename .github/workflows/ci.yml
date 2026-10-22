@@ -24,33 +24,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Download and verify released MCL CLI
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          tag="$(node -p "JSON.parse(require('fs').readFileSync('mcl-cli-version.json', 'utf8')).tag")"
-          [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
-          version="${tag#v}"
-          archive="mcl_${version}_linux_amd64.tar.gz"
-          install_dir="$RUNNER_TEMP/mcl-cli"
-          mkdir -p "$install_dir"
-          gh release download "$tag" \
-            --repo manifest-configuration-language/mcl \
-            --pattern "$archive" \
-            --pattern SHA256SUMS \
-            --dir "$install_dir"
-          (
-            cd "$install_dir"
-            checksum_result="$(sha256sum --ignore-missing --check SHA256SUMS)"
-            if [ "$checksum_result" != "$archive: OK" ]; then
-              printf 'Expected one valid checksum entry for %s, received: %s\n' "$archive" "$checksum_result" >&2
-              exit 1
-            fi
-          )
-          tar -xzf "$install_dir/$archive" -C "$install_dir"
-          mv "$install_dir/mcl-linux-amd64" "$install_dir/mcl"
-          echo "$install_dir" >> "$GITHUB_PATH"
+      - uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
 
       - name: Verify examples and rendered outputs
         run: scripts/verify-examples.sh
