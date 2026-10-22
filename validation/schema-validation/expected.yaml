@@ -1,0 +1,7 @@
+name: "sample-api"
+replicas: 3
+endpoints:
+  - name: "primary"
+    url: "https://api.example.test.walnuts.dev"
+  - name: "health"
+    url: "https://health.example.test.walnuts.dev"

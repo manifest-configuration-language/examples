@@ -1,0 +1,9 @@
+workload:
+  kind: "Job"
+  name: "sample-worker"
+  completions: 1
+workloadName: "sample-worker"
+workloadSize: 1
+container:
+  name: "worker"
+  image: "example.test.walnuts.dev/worker:v1"

@@ -1,0 +1,15 @@
+name: "api"
+image: "example.test.walnuts.dev/api:v2"
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+---
+name: "worker"
+image: "example.test.walnuts.dev/worker:v1"
+resources:
+  requests:
+    cpu: "200m"
+---
+name: "metrics"
+image: "example.test.walnuts.dev/metrics:v1"

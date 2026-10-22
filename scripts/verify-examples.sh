@@ -57,11 +57,10 @@ while IFS= read -r -d '' sample; do
   mkdir -p "$(dirname "$actual")"
   echo "Rendering $sample"
   mcl render "$sample" > "$actual"
-done < <(find . -name main.mcl -print0 | sort -z)
-
-while IFS= read -r -d '' expected; do
-  sample="${expected%/expected.yaml}/main.mcl"
-  actual="$tmp_dir/$sample"
-  actual="${actual%/main.mcl}.yaml"
+  expected="${sample%/main.mcl}/expected.yaml"
+  if [[ ! -f "$expected" ]]; then
+    echo "Missing expected output for $sample: $expected" >&2
+    exit 1
+  fi
   diff -u "$expected" "$actual"
-done < <(find adapters -name expected.yaml -print0 | sort -z)
+done < <(find . -name main.mcl -print0 | sort -z)

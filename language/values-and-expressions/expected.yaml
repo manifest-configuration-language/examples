@@ -1,0 +1,12 @@
+environment: "production"
+replicaCount: 3
+firstPort: 8080
+fallbackRegion: "local"
+configuration:
+  mode: "production"
+  retries: 3
+  ports:
+    - 8080
+    - 9090
+  metadata: {}
+summary: "region=local"

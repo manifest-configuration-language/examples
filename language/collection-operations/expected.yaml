@@ -1,0 +1,11 @@
+features:
+  - "metrics"
+  - "tracing"
+  - "audit"
+rolloutSteps:
+  - 5
+  - 50
+  - 100
+app: "app"
+auditEnabled: true
+selectedFeature: "audit"

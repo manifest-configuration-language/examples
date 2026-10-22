@@ -1,0 +1,11 @@
+containers:
+  - name: "api"
+    image: "example.test.walnuts.dev/api:v1"
+  - name: "worker"
+    image: "example.test.walnuts.dev/worker:v1"
+  - name: "scheduler"
+    image: "example.test.walnuts.dev/scheduler:v1"
+publicPorts:
+  - 9090
+  - 9443
+totalPublicPorts: 18533

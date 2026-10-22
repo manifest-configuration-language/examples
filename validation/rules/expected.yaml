@@ -1,0 +1,8 @@
+name: "api"
+securityContext:
+  allowPrivilegeEscalation: false
+  seccompProfile:
+    type: "RuntimeDefault"
+  capabilities:
+    drop:
+      - "ALL"

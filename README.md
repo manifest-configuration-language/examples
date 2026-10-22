@@ -53,4 +53,4 @@
 
 ## 検証
 
-`scripts/verify-examples.sh`は全サンプルがこの一覧に一度ずつ記載されていることを確認し、各サンプルを`mcl check`と`mcl render`で検証します。Manifest、Kustomize、Helm Adapterのrender結果は各ディレクトリの`expected.yaml`と比較します。CIとリリース前検証はこのスクリプトを実行します。Adapterの出力を意図的に変更した場合は、期待値を確認して更新してください。
+`scripts/verify-examples.sh`は全サンプルがこの一覧に一度ずつ記載されていることを確認し、各サンプルを`mcl check`と`mcl render`で検証します。各ディレクトリの`expected.yaml`とrender結果を比較し、出力の変更を検出します。CIとリリース前検証はこのスクリプトを実行します。出力を意図的に変更した場合は、期待値を確認して更新してください。

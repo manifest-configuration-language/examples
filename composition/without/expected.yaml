@@ -1,0 +1,11 @@
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - "ALL"
+name: "api"
+---
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities: {}
+name: "api"
