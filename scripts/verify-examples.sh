@@ -13,6 +13,15 @@ find . -name main.mcl -print \
 awk -F'[()]' '/^\| \[/ { print $2 }' README.md \
   | sed 's#/$##' \
   | sort > "$tmp_dir/readme-example-directories.txt"
+awk -F'|' '
+  /^\| \[/ {
+    if (NF != 5 || $3 !~ /[^[:space:]]/ || $4 !~ /`mcl (check|render) [^`]+`/) {
+      printf "README.md example row %d must include a description and an executable MCL command.\n", NR > "/dev/stderr"
+      failed = 1
+    }
+  }
+  END { exit failed }
+' README.md
 if ! diff -u "$tmp_dir/example-directories.txt" "$tmp_dir/readme-example-directories.txt"; then
   echo "README.md must list each directory containing main.mcl exactly once." >&2
   exit 1
