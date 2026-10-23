@@ -7,6 +7,12 @@ cd "$root"
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
 
+find . -name main.mcl -print0 | sort -z > "$tmp_dir/samples"
+if [[ ! -s "$tmp_dir/samples" ]]; then
+  echo "No examples found (expected at least one main.mcl)" >&2
+  exit 1
+fi
+
 while IFS= read -r -d '' sample; do
   echo "Checking $sample"
   mcl check "$sample"
@@ -21,4 +27,4 @@ while IFS= read -r -d '' sample; do
     exit 1
   fi
   diff -u "$expected" "$actual"
-done < <(find . -name main.mcl -print0 | sort -z)
+done < "$tmp_dir/samples"
