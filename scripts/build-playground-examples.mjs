@@ -1,9 +1,10 @@
-import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const output = join(root, "packages/examples/examples.json");
+const packageLicense = join(root, "packages/examples/LICENSE");
 const categories = new Map([
 	["adapters", "Integrations"],
 	["composition", "Composition"],
@@ -64,4 +65,5 @@ for (const sampleRoot of (await findEntrypoints(root)).sort()) {
 if (samples.length === 0) throw new Error("No Playground examples were found.");
 await mkdir(dirname(output), { recursive: true });
 await writeFile(output, `${JSON.stringify(samples, null, 2)}\n`);
+await copyFile(join(root, "LICENSE"), packageLicense);
 console.log(`Generated ${samples.length} Playground examples.`);
