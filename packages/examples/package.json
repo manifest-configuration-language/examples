@@ -1,0 +1,26 @@
+{
+  "name": "@manifest-configuration-language/examples",
+  "version": "0.1.0",
+  "description": "Versioned MCL Playground examples.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manifest-configuration-language/examples.git",
+    "directory": "packages/examples"
+  },
+  "type": "module",
+  "license": "Apache-2.0",
+  "files": [
+    "examples.json",
+    "README.md"
+  ],
+  "exports": {
+    "./examples.json": "./examples.json"
+  },
+  "scripts": {
+    "build": "node ../../scripts/build-playground-examples.mjs",
+    "prepack": "npm run build"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
